@@ -12,6 +12,7 @@ import {
   lineExpand,
   iconRotate
 } from "@/lib/animations";
+import { optimizedViewport } from "@/lib/framerMotionConfig";
 
 type Category = 'vorspeise' | 'falafel' | 'fleisch' | 'weitere';
 
@@ -119,16 +120,17 @@ const Menu = () => {
   };
 
   return (
-    <motion.section
+    <section
       id="menu"
       className="section-padding bg-card"
+    >
+      <motion.div 
+        className="container-custom"
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
+        viewport={optimizedViewport}
       variants={staggerContainer}
-      layout={false}
     >
-      <div className="container-custom">
         {/* Section Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-4 mb-4">
@@ -283,8 +285,8 @@ const Menu = () => {
             </motion.div>
           </div>
         </div>
-      </div>
-    </motion.section>
+      </motion.div>
+    </section>
   );
 };
 

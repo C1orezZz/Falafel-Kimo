@@ -1,8 +1,7 @@
 import { useState, lazy, Suspense, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import Header from '@/components/Header';
 import PageLoader from '@/components/PageLoader';
-import { pageEnter } from '@/lib/animations';
 
 const Hero = lazy(() => import('@/components/Hero'));
 const About = lazy(() => import('@/components/About'));
@@ -16,77 +15,46 @@ const Index = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollEnabledRef = useRef(false);
 
-  // Debug-Logging Funktion
-  const debugLog = (message: string, data?: any) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[Scroll Debug] ${message}`, data || '');
-    }
-  };
-
   // Funktion zum Aktivieren des Scrollens
   const enableScroll = useCallback(() => {
-    if (scrollEnabledRef.current) return;
+    if (scrollEnabledRef.current) {
+      return;
+    }
+
+    document.documentElement.style.setProperty('overflow', 'auto', 'important');
+    document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
+    document.documentElement.style.setProperty('overflow-x', 'hidden', 'important');
     
-    debugLog('Aktiviere Scrollen...');
+    document.body.style.setProperty('overflow', 'visible', 'important');
+    document.body.style.setProperty('overflow-y', 'visible', 'important');
+    document.body.style.setProperty('overflow-x', 'hidden', 'important');
     
-    // Entferne alle möglichen Blockaden und setze explizite Werte
-    document.body.style.overflow = 'auto';
-    document.documentElement.style.overflow = 'auto';
-    document.body.style.position = '';
-    document.documentElement.style.position = '';
-    document.body.style.height = '';
-    document.documentElement.style.height = '';
-    document.body.style.width = '';
-    document.documentElement.style.width = '';
-    // Setze overscroll-behavior explizit auf 'auto', um Scroll-Momentum zu ermöglichen
-    document.body.style.overscrollBehavior = 'auto';
-    document.documentElement.style.overscrollBehavior = 'auto';
-    // Stelle sicher, dass scroll-behavior nicht das Scrollen blockiert
-    document.body.style.scrollBehavior = 'auto';
-    document.documentElement.style.scrollBehavior = 'auto';
+    const rootEl = document.getElementById('root');
+    if (rootEl) {
+      rootEl.style.setProperty('overflow-y', 'visible', 'important');
+      rootEl.style.setProperty('height', 'auto', 'important');
+    }
     
-    // Stelle sicher, dass wir bei Position 0 starten
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    document.body.style.removeProperty('position');
+    document.documentElement.style.removeProperty('position');
+    document.body.style.removeProperty('height');
+    document.documentElement.style.removeProperty('height');
     
-    // Force Browser to recalculate layout
     void document.body.offsetHeight;
     void document.documentElement.offsetHeight;
     
-    const bodyHeight = document.body.scrollHeight;
-    const htmlHeight = document.documentElement.scrollHeight;
-    const viewportHeight = window.innerHeight;
-    
-    debugLog('Dokumenthöhen-Berechnung', {
-      bodyHeight,
-      htmlHeight,
-      viewportHeight,
-      isScrollable: bodyHeight > viewportHeight || htmlHeight > viewportHeight
-    });
-    
     scrollEnabledRef.current = true;
-    debugLog('Scrollen aktiviert');
   }, []);
 
   // ResizeObserver, um sicherzustellen, dass die Dokumenthöhe korrekt berechnet wurde
   useEffect(() => {
     if (!contentVisible || !contentRef.current) return;
 
-    debugLog('ResizeObserver wird eingerichtet...');
-    
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        const { height } = entry.contentRect;
         const scrollHeight = document.documentElement.scrollHeight;
         const viewportHeight = window.innerHeight;
         
-        debugLog('ResizeObserver: Größe geändert', {
-          contentHeight: height,
-          scrollHeight,
-          viewportHeight,
-          isScrollable: scrollHeight > viewportHeight
-        });
-        
-        // Wenn Content geladen ist und höher als Viewport, aktiviere Scrollen
         if (scrollHeight > viewportHeight && !scrollEnabledRef.current) {
           enableScroll();
         }
@@ -97,10 +65,8 @@ const Index = () => {
     resizeObserver.observe(document.body);
     resizeObserver.observe(document.documentElement);
 
-    // Fallback: Aktiviere Scrollen nach kurzer Verzögerung, falls ResizeObserver nicht auslöst
     const fallbackTimeout = setTimeout(() => {
       if (!scrollEnabledRef.current) {
-        debugLog('Fallback: Aktiviere Scrollen nach Timeout');
         enableScroll();
       }
     }, 100);
@@ -111,75 +77,55 @@ const Index = () => {
     };
   }, [contentVisible, enableScroll]);
 
-  // Scroll-Event-Listener für Debugging und zur Verhinderung von Blockaden
+  // Überwache #root, um sicherzustellen, dass es nicht scrollbar wird
+  useEffect(() => {
+    const rootEl = document.getElementById('root');
+    if (!rootEl) return;
+
+    const ensureRootNotScrollable = () => {
+      const computedStyle = getComputedStyle(rootEl);
+      if (computedStyle.overflowY !== 'visible' && computedStyle.overflowY !== 'hidden') {
+        rootEl.style.setProperty('overflow-y', 'visible', 'important');
+        rootEl.style.setProperty('height', 'auto', 'important');
+        rootEl.style.setProperty('max-height', 'none', 'important');
+      }
+    };
+
+    // Prüfe sofort
+    ensureRootNotScrollable();
+
+    // Überwache Style-Änderungen an #root
+    const mutationObserver = new MutationObserver(() => {
+      ensureRootNotScrollable();
+    });
+
+    mutationObserver.observe(rootEl, {
+      attributes: true,
+      attributeFilter: ['style', 'class'],
+      subtree: false,
+    });
+
+    // Prüfe regelmäßig (als Fallback)
+    const intervalId = setInterval(ensureRootNotScrollable, 500);
+
+    return () => {
+      mutationObserver.disconnect();
+      clearInterval(intervalId);
+    };
+  }, [contentVisible]);
+
+  // Sicherheits-Check: Stelle sicher, dass html immer scrollbar ist
   useEffect(() => {
     if (!contentVisible) return;
 
-    let lastScrollY = window.scrollY;
-    let lastDeltaY = 0;
-    let scrollDirection: 'up' | 'down' | null = null;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const newDirection = currentScrollY > lastScrollY ? 'down' : currentScrollY < lastScrollY ? 'up' : scrollDirection;
-      
-      if (newDirection !== scrollDirection) {
-        debugLog('Scroll-Richtung geändert', {
-          from: scrollDirection,
-          to: newDirection,
-          scrollY: currentScrollY
-        });
-        scrollDirection = newDirection;
+    const timeout = setTimeout(() => {
+      const htmlOverflow = getComputedStyle(document.documentElement).overflowY;
+      if (htmlOverflow === 'hidden') {
+        document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
       }
-      
-      lastScrollY = currentScrollY;
-      
-      debugLog('Scroll-Event', {
-        scrollY: currentScrollY,
-        scrollHeight: document.documentElement.scrollHeight,
-        clientHeight: document.documentElement.clientHeight,
-        direction: scrollDirection
-      });
-    };
+    }, 200);
 
-    const handleWheel = (e: WheelEvent) => {
-      const currentDeltaY = e.deltaY;
-      const newDirection = currentDeltaY > 0 ? 'down' : currentDeltaY < 0 ? 'up' : null;
-      
-      // Wenn sich die Scroll-Richtung ändert, stelle sicher, dass das Event nicht blockiert wird
-      if (newDirection && newDirection !== scrollDirection && lastDeltaY !== 0) {
-        debugLog('Wheel-Richtung geändert - stelle sicher, dass Event nicht blockiert wird', {
-          from: scrollDirection,
-          to: newDirection,
-          deltaY: currentDeltaY,
-          lastDeltaY
-        });
-        
-        // Stelle sicher, dass overscroll-behavior korrekt gesetzt ist
-        if (document.documentElement.style.overscrollBehavior !== 'auto') {
-          document.documentElement.style.overscrollBehavior = 'auto';
-          document.body.style.overscrollBehavior = 'auto';
-        }
-      }
-      
-      lastDeltaY = currentDeltaY;
-      
-      debugLog('Wheel-Event', {
-        deltaY: currentDeltaY,
-        scrollY: window.scrollY,
-        scrollHeight: document.documentElement.scrollHeight,
-        direction: newDirection
-      });
-    };
-
-    // Verwende passive Listeners für bessere Performance
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('wheel', handleWheel, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('wheel', handleWheel);
-    };
+    return () => clearTimeout(timeout);
   }, [contentVisible]);
 
   return (
@@ -189,11 +135,7 @@ const Index = () => {
           <PageLoader
             key="loader"
             onStartExit={() => {
-              debugLog('PageLoader: onStartExit aufgerufen');
-              // Setze contentVisible sofort, damit Content scrollbar ist
               setContentVisible(true);
-              
-              // Aktiviere Scrollen nach kurzer Verzögerung, damit der Browser das Layout berechnen kann
               requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                   enableScroll();
@@ -201,7 +143,6 @@ const Index = () => {
               });
             }}
             onComplete={() => {
-              debugLog('PageLoader: onComplete aufgerufen');
               setShowLoader(false);
             }}
           />
@@ -216,25 +157,18 @@ const Index = () => {
         style={{ 
           position: 'relative',
           zIndex: 1,
-          // Stelle sicher, dass der Content sofort scrollbar ist
           pointerEvents: 'auto',
           touchAction: 'pan-y',
-          // Stelle sicher, dass overscroll-behavior korrekt gesetzt ist
           overscrollBehavior: 'auto',
-          scrollBehavior: 'auto'
+          scrollBehavior: 'auto',
+          overflow: 'visible'
         }}
       >
-        <motion.div
+        <div
           key="page"
-          initial="hidden"
-          animate={contentVisible ? 'show' : 'hidden'}
-          variants={pageEnter}
-          layout={false}
           style={{ 
             opacity: contentVisible ? 1 : 0,
-            // Verhindere, dass Animationen das Scrollen blockieren
             pointerEvents: 'auto',
-            // Optimiere für Scroll-Performance
             willChange: contentVisible ? 'opacity' : 'auto'
           }}
         >
@@ -255,7 +189,7 @@ const Index = () => {
           <Suspense fallback={null}>
             <Footer />
           </Suspense>
-        </motion.div>
+        </div>
       </div>
     </>
   );

@@ -107,19 +107,35 @@
     @apply border-border;
   }
 
-  html, body {
+  html {
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
     /* Stelle sicher, dass Scroll-Momentum funktioniert */
     overscroll-behavior: auto;
     scroll-behavior: auto;
+    height: 100%;
+  }
+
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+    overflow-y: visible !important; /* Body soll NICHT scrollen, nur html */
+    height: auto;
+    min-height: 100%;
   }
 
   #root {
     min-height: 100vh;
     width: 100%;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
+    /* Stelle sicher, dass #root NICHT scrollt - nur html sollte scrollen */
+    overflow-y: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    position: relative !important;
   }
 
   body {

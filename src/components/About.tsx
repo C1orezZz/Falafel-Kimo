@@ -11,6 +11,7 @@ import {
   featureCard,
   imageParallax
 } from "@/lib/animations";
+import { optimizedViewport } from "@/lib/framerMotionConfig";
 
 const About = () => {
   const features = [
@@ -32,16 +33,17 @@ const About = () => {
   ];
 
   return (
-    <motion.section
+    <section
       id="about"
       className="section-padding bg-background"
+    >
+      <motion.div 
+        className="container-custom"
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
+        viewport={optimizedViewport}
       variants={staggerContainer}
-      layout={false}
     >
-      <div className="container-custom">
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="flex items-center justify-center gap-4 mb-4">
@@ -83,9 +85,6 @@ const About = () => {
           <motion.div 
             className="relative" 
             variants={imageParallax}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
           >
             <motion.div 
               className="aspect-square rounded-2xl overflow-hidden shadow-card"
@@ -104,9 +103,8 @@ const About = () => {
             <motion.div 
               className="absolute -bottom-4 -right-4 w-full h-full border-4 border-secondary rounded-2xl -z-10"
               initial={{ opacity: 0, x: -20, y: -20 }}
-              whileInView={{ opacity: 1, x: 0, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
             />
           </motion.div>
 
@@ -114,9 +112,6 @@ const About = () => {
           <motion.div 
             className="space-y-6" 
             variants={staggerContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
           >
             <motion.h3 
               className="font-display text-2xl md:text-3xl font-bold text-foreground" 
@@ -172,8 +167,8 @@ const About = () => {
             </motion.div>
           </motion.div>
         </div>
-      </div>
-    </motion.section>
+      </motion.div>
+    </section>
   );
 };
 

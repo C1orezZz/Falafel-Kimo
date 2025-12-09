@@ -10,13 +10,9 @@ import {
 
 const Hero = () => {
   return (
-    <motion.section
+    <section
       id="home"
       className="relative min-h-screen flex items-center overflow-hidden"
-      initial="hidden"
-      animate="show"
-      variants={staggerContainer}
-      transition={{ delay: 0.3 }}
     >
       {/* Background Image with Overlay */}
       <motion.div
@@ -116,8 +112,7 @@ const Hero = () => {
           </motion.div>
         </div>
       </div>
-
-    </motion.section>
+    </section>
   );
 };
 

@@ -11,96 +11,74 @@ const PageLoader = ({ onComplete, onStartExit }: PageLoaderProps) => {
   const [isExiting, setIsExiting] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Debug-Logging Funktion
-  const debugLog = (message: string, data?: any) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[PageLoader Debug] ${message}`, data || '');
-    }
-  };
-
   const triggerExit = useCallback(() => {
     if (isExiting) return;
     
-    debugLog('triggerExit aufgerufen');
     setIsExiting(true);
     
-    // Stelle Body-Scroll SOFORT wieder her (synchron, nicht in requestAnimationFrame)
-    // Dies muss passieren, bevor onStartExit aufgerufen wird
-    debugLog('Entferne Scroll-Blockaden');
-    document.body.style.overflow = 'auto';
-    document.documentElement.style.overflow = 'auto';
-    document.body.style.position = '';
-    document.documentElement.style.position = '';
-    document.body.style.height = '';
-    document.documentElement.style.height = '';
-    document.body.style.width = '';
-    document.documentElement.style.width = '';
-    // Setze overscroll-behavior explizit auf 'auto'
-    document.body.style.overscrollBehavior = 'auto';
-    document.documentElement.style.overscrollBehavior = 'auto';
-    document.body.style.scrollBehavior = 'auto';
-    document.documentElement.style.scrollBehavior = 'auto';
+    document.documentElement.style.setProperty('overflow', 'auto', 'important');
+    document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
+    document.documentElement.style.setProperty('overflow-x', 'hidden', 'important');
     
-    // Stelle sicher, dass Scrollen sofort funktioniert
+    document.body.style.setProperty('overflow', 'visible', 'important');
+    document.body.style.setProperty('overflow-y', 'visible', 'important');
+    document.body.style.setProperty('overflow-x', 'hidden', 'important');
+    
+    const rootEl = document.getElementById('root');
+    if (rootEl) {
+      rootEl.style.setProperty('overflow-y', 'visible', 'important');
+      rootEl.style.setProperty('height', 'auto', 'important');
+    }
+    
+    document.body.style.removeProperty('position');
+    document.documentElement.style.removeProperty('position');
+    document.body.style.removeProperty('height');
+    document.documentElement.style.removeProperty('height');
+    
     window.scrollTo(0, 0);
     
-    debugLog('Scroll-Blockaden entfernt, rufe onStartExit auf');
-    // Starte Landing Page sofort für nahtlosen Übergang
     onStartExit?.();
-    
-    // Entferne den PageLoader sofort aus dem DOM, damit er das Scrollen nicht blockiert
-    // Die Animation wird durch AnimatePresence gehandhabt, aber wir entfernen ihn sofort
     setIsVisible(false);
-    debugLog('PageLoader unsichtbar gemacht');
+    
     setTimeout(() => {
-      debugLog('onComplete aufgerufen');
       onComplete();
     }, 50);
   }, [isExiting, onComplete, onStartExit]);
 
   useEffect(() => {
-    debugLog('PageLoader: useEffect - Blockiere Scrollen');
-    // Verhindere Body-Scroll während des Loaders
+    if (isExiting) {
+      return;
+    }
+
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
     
     const videoEl = videoRef.current;
     videoEl?.play().catch(() => {
-      debugLog('Video Autoplay blockiert, verwende Fallback');
-      // falls Autoplay blockiert wird, trotzdem weiter
       setTimeout(triggerExit, 1800);
     });
 
     const onEnded = () => {
-      debugLog('Video beendet');
       triggerExit();
     };
     const fallback = setTimeout(() => {
-      debugLog('Fallback Timeout erreicht');
       triggerExit();
     }, 6000);
 
     videoEl?.addEventListener("ended", onEnded);
 
     return () => {
-      debugLog('PageLoader: Cleanup - Stelle Scrollen wieder her');
       clearTimeout(fallback);
       videoEl?.removeEventListener("ended", onEnded);
-      // Stelle Body-Scroll wieder her, wenn Komponente unmountet
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
-      document.body.style.position = '';
-      document.documentElement.style.position = '';
-      document.body.style.height = '';
-      document.documentElement.style.height = '';
-      document.body.style.width = '';
-      document.documentElement.style.width = '';
-      document.body.style.overscrollBehavior = 'auto';
-      document.documentElement.style.overscrollBehavior = 'auto';
-      document.body.style.scrollBehavior = 'auto';
-      document.documentElement.style.scrollBehavior = 'auto';
+      document.documentElement.style.setProperty('overflow', 'auto', 'important');
+      document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
+      document.body.style.setProperty('overflow-y', 'visible', 'important');
+      const rootEl = document.getElementById('root');
+      if (rootEl) {
+        rootEl.style.setProperty('overflow-y', 'visible', 'important');
+      }
     };
-  }, [triggerExit]);
+  }, [triggerExit, isExiting]);
 
   return (
     <AnimatePresence mode="wait">

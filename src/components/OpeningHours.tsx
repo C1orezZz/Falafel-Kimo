@@ -2,12 +2,12 @@ import { Clock, MapPin, Phone, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import { 
   fadeUp, 
-  scaleIn, 
   staggerContainer,
   slideInLeft,
   slideInRight,
   featureCard
 } from "@/lib/animations";
+import { optimizedViewport } from "@/lib/framerMotionConfig";
 
 const OpeningHours = () => {
   const hours = [
@@ -17,24 +17,22 @@ const OpeningHours = () => {
   ];
 
   return (
-    <motion.section
+    <section
       id="contact"
       className="section-padding bg-background"
+    >
+      <motion.div 
+        className="container-custom"
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
+        viewport={optimizedViewport}
       variants={staggerContainer}
-      layout={false}
     >
-      <div className="container-custom">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 w-full overflow-hidden">
           {/* Map */}
           <motion.div 
             className="relative w-full" 
             variants={slideInLeft}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
           >
             <motion.div 
               className="w-full max-w-full aspect-[4/5] sm:aspect-square lg:aspect-auto lg:h-full min-h-[260px] sm:min-h-[320px] rounded-2xl overflow-hidden shadow-card bg-muted"
@@ -68,9 +66,6 @@ const OpeningHours = () => {
           <motion.div 
             variants={staggerContainer} 
             className="w-full max-w-full"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
           >
             {/* Opening Hours */}
             <motion.div className="mb-10" variants={slideInRight}>
@@ -192,8 +187,8 @@ const OpeningHours = () => {
             </motion.div>
           </motion.div>
         </div>
-      </div>
-    </motion.section>
+      </motion.div>
+    </section>
   );
 };
 

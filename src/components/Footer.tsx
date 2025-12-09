@@ -1,21 +1,21 @@
 import { MapPin, Phone, Mail, Instagram, Facebook } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer } from '@/lib/animations';
+import { optimizedViewport } from '@/lib/framerMotionConfig';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <motion.footer 
-      className="bg-primary text-primary-foreground"
+    <footer className="bg-primary text-primary-foreground">
+      {/* Main Footer */}
+      <motion.div 
+        className="container-custom section-padding pb-12"
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
+        viewport={optimizedViewport}
       variants={staggerContainer}
-      layout={false}
     >
-      {/* Main Footer */}
-      <div className="container-custom section-padding pb-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <motion.div className="lg:col-span-2" variants={fadeUp}>
@@ -119,7 +119,7 @@ const Footer = () => {
             </ul>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Bottom Bar */}
       <motion.div 
@@ -133,7 +133,7 @@ const Footer = () => {
           </div>
         </div>
       </motion.div>
-    </motion.footer>
+    </footer>
   );
 };
 

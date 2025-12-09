@@ -5,11 +5,13 @@ import { Phone } from "lucide-react";
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Reaktiviert: Scroll-Listener für Header-State
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
