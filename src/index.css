@@ -1,0 +1,340 @@
+@import url('https://fonts.googleapis.com/css2?family=Freckle+Face&family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warm Falafel Restaurant Theme */
+    --background: 38 35% 95%;
+    --foreground: 25 30% 15%;
+
+    --card: 38 30% 92%;
+    --card-foreground: 25 30% 15%;
+
+    --popover: 38 30% 92%;
+    --popover-foreground: 25 30% 15%;
+
+    /* Deep Forest Green - Primary */
+    --primary: 145 45% 22%;
+    --primary-foreground: 38 35% 95%;
+
+    /* Warm Gold/Brown - Secondary */
+    --secondary: 35 65% 45%;
+    --secondary-foreground: 38 35% 95%;
+
+    /* Muted Cream */
+    --muted: 38 25% 88%;
+    --muted-foreground: 25 20% 40%;
+
+    /* Golden Accent */
+    --accent: 35 70% 50%;
+    --accent-foreground: 25 30% 15%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 35 25% 80%;
+    --input: 35 25% 80%;
+    --ring: 145 45% 22%;
+
+    --radius: 0.75rem;
+
+    /* Custom Colors */
+    --cream: 38 35% 95%;
+    --cream-dark: 38 30% 88%;
+    --forest: 145 45% 22%;
+    --forest-light: 145 35% 35%;
+    --gold: 35 70% 50%;
+    --gold-dark: 35 65% 40%;
+    --brown: 25 30% 25%;
+    --brown-light: 25 25% 35%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(180deg, hsl(145 45% 22% / 0.95), hsl(145 45% 18% / 0.98));
+    --gradient-gold: linear-gradient(135deg, hsl(35 70% 50%), hsl(35 65% 40%));
+    --gradient-warm: linear-gradient(180deg, hsl(38 35% 95%), hsl(38 30% 90%));
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px hsl(25 30% 15% / 0.08);
+    --shadow-card: 0 8px 30px hsl(25 30% 15% / 0.12);
+    --shadow-glow: 0 0 40px hsl(35 70% 50% / 0.3);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 25 30% 10%;
+    --foreground: 38 35% 95%;
+
+    --card: 25 28% 14%;
+    --card-foreground: 38 35% 95%;
+
+    --popover: 25 28% 14%;
+    --popover-foreground: 38 35% 95%;
+
+    --primary: 145 40% 35%;
+    --primary-foreground: 25 30% 10%;
+
+    --secondary: 35 60% 50%;
+    --secondary-foreground: 25 30% 10%;
+
+    --muted: 25 25% 20%;
+    --muted-foreground: 38 25% 70%;
+
+    --accent: 35 65% 55%;
+    --accent-foreground: 25 30% 10%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 25 25% 25%;
+    --input: 25 25% 25%;
+    --ring: 145 40% 35%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  #root {
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 py-16 md:py-24;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .heading-display {
+    @apply font-display font-bold tracking-tight;
+  }
+
+  .heading-accent {
+    @apply font-display font-bold text-secondary italic;
+  }
+
+  .falafel-heading {
+    font-family: 'Freckle Face', 'Playfair Display', cursive;
+    letter-spacing: 0.06em;
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+
+  .falafel-word {
+    display: inline-flex;
+    gap: 0.08em;
+  }
+
+  .falafel-letter {
+    display: inline-block;
+    text-shadow: 0 10px 28px rgba(0, 0, 0, 0.35), 0 3px 0 rgba(0, 0, 0, 0.2);
+    background-size: 140% 140%;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .falafel-gold {
+    background-image:
+      radial-gradient(circle at 22% 30%, rgba(255, 255, 255, 0.35) 0, rgba(255, 255, 255, 0) 28%),
+      radial-gradient(circle at 78% 65%, rgba(0, 0, 0, 0.12) 0, rgba(0, 0, 0, 0) 26%),
+      linear-gradient(155deg, #f7d58f 0%, #d68b43 48%, #f2c46d 100%);
+  }
+
+  .falafel-green {
+    background-image:
+      radial-gradient(circle at 30% 35%, rgba(255, 255, 255, 0.24) 0, rgba(255, 255, 255, 0) 24%),
+      radial-gradient(circle at 70% 60%, rgba(0, 0, 0, 0.15) 0, rgba(0, 0, 0, 0) 26%),
+      linear-gradient(150deg, #3e9a45 0%, #276a32 46%, #52b867 100%);
+  }
+
+  .falafel-brown {
+    background-image:
+      radial-gradient(circle at 28% 32%, rgba(255, 255, 255, 0.2) 0, rgba(255, 255, 255, 0) 24%),
+      radial-gradient(circle at 68% 68%, rgba(0, 0, 0, 0.18) 0, rgba(0, 0, 0, 0) 28%),
+      linear-gradient(150deg, #b46a33 0%, #7b3f1f 45%, #c27d4a 100%);
+  }
+
+  .falafel-sesame {
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255, 239, 208, 0.7) 0, rgba(255, 239, 208, 0) 32%),
+      radial-gradient(circle at 80% 65%, rgba(255, 239, 208, 0.6) 0, rgba(255, 239, 208, 0) 30%),
+      linear-gradient(150deg, #e4b863 0%, #c8873a 48%, #f0cf8a 100%);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .decorative-line {
+    @apply h-0.5 bg-gradient-to-r from-transparent via-secondary to-transparent;
+  }
+
+  .card-menu {
+    @apply bg-card rounded-xl p-6 shadow-soft transition-all duration-300 hover:shadow-card hover:-translate-y-1;
+  }
+
+  .card-glass {
+    @apply bg-white/60 backdrop-blur-lg border border-white/40 shadow-soft;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-forest-light;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:opacity-90;
+  }
+
+  .btn-3d {
+    @apply relative inline-flex items-center justify-center overflow-hidden rounded-full px-7 py-3 font-semibold transition-all duration-300;
+    box-shadow: 0 10px 30px hsla(35, 70%, 50%, 0.3);
+  }
+
+  .btn-3d::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, hsla(35, 70%, 55%, 0.25), hsla(145, 45%, 22%, 0.2));
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+
+  .btn-3d:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 15px 45px hsla(35, 70%, 50%, 0.4);
+  }
+
+  .btn-3d:hover::after {
+    opacity: 1;
+  }
+
+  .nav-underline {
+    @apply relative inline-flex items-center gap-2;
+  }
+
+  .nav-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(90deg, hsla(35, 70%, 50%, 1), hsla(145, 45%, 22%, 0.6));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 200ms ease;
+  }
+
+  .nav-underline:hover::after,
+  .nav-underline:focus-visible::after {
+    transform: scaleX(1);
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+
+  .animate-breathe {
+    animation: breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+  }
+
+  .hover-float {
+    transition: transform 250ms ease, box-shadow 250ms ease;
+  }
+
+  .hover-float:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 35px hsla(35, 70%, 50%, 0.25);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+}
