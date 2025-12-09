@@ -12,6 +12,7 @@ const Footer = () => {
       whileInView="show"
       viewport={{ once: true, amount: 0.2 }}
       variants={staggerContainer}
+      layout={false}
     >
       {/* Main Footer */}
       <div className="container-custom section-padding pb-12">

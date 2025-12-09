@@ -111,6 +111,9 @@
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    /* Stelle sicher, dass Scroll-Momentum funktioniert */
+    overscroll-behavior: auto;
+    scroll-behavior: auto;
   }
 
   #root {

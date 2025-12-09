@@ -39,6 +39,7 @@ const About = () => {
       whileInView="show"
       viewport={{ once: true, amount: 0.2 }}
       variants={staggerContainer}
+      layout={false}
     >
       <div className="container-custom">
         {/* Section Header */}

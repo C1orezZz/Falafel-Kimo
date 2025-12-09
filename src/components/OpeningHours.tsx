@@ -24,6 +24,7 @@ const OpeningHours = () => {
       whileInView="show"
       viewport={{ once: true, amount: 0.2 }}
       variants={staggerContainer}
+      layout={false}
     >
       <div className="container-custom">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 w-full overflow-hidden">
