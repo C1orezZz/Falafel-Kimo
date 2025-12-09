@@ -14,10 +14,11 @@ const PageLoader = ({ onComplete, onStartExit }: PageLoaderProps) => {
   const triggerExit = useCallback(() => {
     if (isExiting) return;
     setIsExiting(true);
-    // Starte Landing Page früher für nahtlosen Übergang
-    setTimeout(() => {
-      onStartExit?.();
-    }, 100);
+    // Stelle Body-Scroll sofort wieder her, damit Scrollen möglich ist
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    // Starte Landing Page sofort für nahtlosen Übergang
+    onStartExit?.();
     setTimeout(() => {
       setIsVisible(false);
       setTimeout(onComplete, 50);
@@ -25,6 +26,10 @@ const PageLoader = ({ onComplete, onStartExit }: PageLoaderProps) => {
   }, [isExiting, onComplete, onStartExit]);
 
   useEffect(() => {
+    // Verhindere Body-Scroll während des Loaders
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
     const videoEl = videoRef.current;
     videoEl?.play().catch(() => {
       // falls Autoplay blockiert wird, trotzdem weiter
@@ -39,8 +44,19 @@ const PageLoader = ({ onComplete, onStartExit }: PageLoaderProps) => {
     return () => {
       clearTimeout(fallback);
       videoEl?.removeEventListener("ended", onEnded);
+      // Stelle Body-Scroll wieder her, wenn Komponente unmountet
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     };
   }, [triggerExit]);
+
+  // Stelle Body-Scroll sofort wieder her, wenn Exit-Animation startet
+  useEffect(() => {
+    if (isExiting) {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+  }, [isExiting]);
 
   return (
     <AnimatePresence mode="wait">
@@ -55,6 +71,9 @@ const PageLoader = ({ onComplete, onStartExit }: PageLoaderProps) => {
           }
           exit={{ opacity: 0, scale: 1.02, filter: "blur(8px)" }}
           transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+          style={{ 
+            pointerEvents: isExiting ? "none" : "auto"
+          }}
         >
           {/* Fullscreen Video */}
           <motion.div

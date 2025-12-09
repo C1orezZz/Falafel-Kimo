@@ -80,19 +80,15 @@ export const mediaReveal = (index: number): Variants => ({
 
 export const pageEnter: Variants = {
   hidden: { 
-    opacity: 0, 
-    scale: 0.98,
-    filter: "blur(4px)",
+    opacity: 0,
   },
   show: {
     opacity: 1,
-    scale: 1,
-    filter: "blur(0px)",
     transition: {
-      duration: 0.9,
+      duration: 0.5,
       ease: [0.25, 0.1, 0.25, 1],
       staggerChildren: 0.06,
-      delayChildren: 0.1,
+      delayChildren: 0.05,
     },
   },
 };
