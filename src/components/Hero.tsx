@@ -83,7 +83,7 @@ const Hero = () => {
             </motion.a>
             <motion.a
               href="#contact"
-              className="btn-3d bg-primary-foreground/10 backdrop-blur-sm text-primary-foreground border-2 border-primary-foreground/30"
+              className="btn-3d bg-primary-foreground/10 backdrop-blur-sm text-primary-foreground border-2 border-primary-foreground/30 gap-3"
               whileHover={{ scale: 1.03, y: -3 }}
               whileTap={{ scale: 0.98 }}
             >
